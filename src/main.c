@@ -21,14 +21,14 @@ static double get_scale(void) {
 #if _WIN32
   return dpi / 96.0;
 #elif __APPLE__
-  return dpi / 72.0;
+  return 1.0; /* dpi / 72.0; */
 #else
   return dpi / 150.0;
 #endif
 }
 
 
-static void get_exe_dir(char *buf, int sz) {
+static void get_exe_filename(char *buf, int sz) {
 #if _WIN32
   int len = GetModuleFileName(NULL, buf, sz - 1);
   buf[len] = '\0';
@@ -41,15 +41,8 @@ static void get_exe_dir(char *buf, int sz) {
   unsigned size = sz;
   _NSGetExecutablePath(buf, &size);
 #else
-  strcpy(buf, ".")
+  strcpy(buf, "./lite");
 #endif
-
-  for (int i = strlen(buf) - 1; i > 0; i--) {
-    if (buf[i] == '/' || buf[i] == '\\') {
-      buf[i] = '\0';
-      break;
-    }
-  }
 }
 
 
@@ -89,8 +82,8 @@ int main(int argc, char **argv) {
   SDL_GetCurrentDisplayMode(0, &dm);
 
   window = SDL_CreateWindow(
-    "", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-    dm.w * 0.6, dm.h * 0.9, SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
+    "", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, dm.w * 0.6, dm.h * 0.9,
+    SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_HIDDEN);
   init_window_icon();
   ren_init(window);
 
@@ -116,10 +109,10 @@ int main(int argc, char **argv) {
   lua_pushnumber(L, get_scale());
   lua_setglobal(L, "SCALE");
 
-  char exedir[2048];
-  get_exe_dir(exedir, sizeof(exedir));
-  lua_pushstring(L, exedir);
-  lua_setglobal(L, "EXEDIR");
+  char exename[2048];
+  get_exe_filename(exename, sizeof(exename));
+  lua_pushstring(L, exename);
+  lua_setglobal(L, "EXEFILE");
 
 
   (void) luaL_dostring(L,
@@ -127,6 +120,7 @@ int main(int argc, char **argv) {
     "xpcall(function()\n"
     "  SCALE = tonumber(os.getenv(\"LITE_SCALE\")) or SCALE\n"
     "  PATHSEP = package.config:sub(1, 1)\n"
+    "  EXEDIR = EXEFILE:match(\"^(.-)[^/\\\\]*$\")"
     "  package.path = EXEDIR .. '/data/?.lua;' .. package.path\n"
     "  package.path = EXEDIR .. '/data/?/init.lua;' .. package.path\n"
     "  core = require('core')\n"

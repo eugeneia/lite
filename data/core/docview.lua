@@ -2,6 +2,7 @@ local core = require "core"
 local common = require "core.common"
 local config = require "core.config"
 local style = require "core.style"
+local keymap = require "core.keymap"
 local translate = require "core.doc.translate"
 local View = require "core.view"
 
@@ -202,9 +203,16 @@ function DocView:on_mouse_pressed(button, x, y, clicks)
     local line2, col2 = translate.end_of_word(self.doc, line, col)
     self.doc:set_selection(line2, col2, line1, col1)
   elseif clicks == 3 then
+    if line == #self.doc.lines then
+      self.doc:insert(math.huge, math.huge, "\n")
+    end
     self.doc:set_selection(line + 1, 1, line, 1)
   else
-    self.doc:set_selection(line, col)
+    local line2, col2
+    if keymap.modkeys["shift"] then
+      line2, col2 = select(3, self.doc:get_selection())
+    end
+    self.doc:set_selection(line, col, line2, col2)
     self.mouse_selecting = true
   end
   self.blink_timer = 0
@@ -325,7 +333,7 @@ function DocView:draw_line_gutter(idx, x, y)
     color = style.line_number2
   end
   local yoffset = self:get_line_text_y_offset()
-  x = x + self.scroll.x
+  x = x + style.padding.x
   renderer.draw_text(self:get_font(), idx, x, y + yoffset, color)
 end
 
@@ -340,7 +348,7 @@ function DocView:draw()
   local lh = self:get_line_height()
 
   local _, y = self:get_line_screen_position(minline)
-  local x = self:get_content_offset() + style.padding.x
+  local x = self.position.x
   for i = minline, maxline do
     self:draw_line_gutter(i, x, y)
     y = y + lh

@@ -78,13 +78,13 @@ static RenRect merge_rects(RenRect a, RenRect b) {
 
 static Command* push_command(int type, int size) {
   Command *cmd = (Command*) (command_buf + command_buf_idx);
-  memset(cmd, 0, sizeof(Command));
   int n = command_buf_idx + size;
   if (n > COMMAND_BUF_SIZE) {
-    fprintf(stderr, "Fatal error in " __FILE__ ": exhausted command buffer\n");
-    exit(EXIT_FAILURE);
+    fprintf(stderr, "Warning: (" __FILE__ "): exhausted command buffer\n");
+    return NULL;
   }
   command_buf_idx = n;
+  memset(cmd, 0, sizeof(Command));
   cmd->type = type;
   cmd->size = size;
   return cmd;
@@ -119,23 +119,34 @@ void rencache_set_clip_rect(RenRect rect) {
 
 
 void rencache_draw_rect(RenRect rect, RenColor color) {
+  if (!rects_overlap(screen_rect, rect)) { return; }
   Command *cmd = push_command(DRAW_RECT, sizeof(Command));
-  cmd->rect = rect;
-  cmd->color = color;
+  if (cmd) {
+    cmd->rect = rect;
+    cmd->color = color;
+  }
 }
 
 
 int rencache_draw_text(RenFont *font, const char *text, int x, int y, RenColor color) {
-  int sz = strlen(text) + 1;
-  Command *cmd = push_command(DRAW_TEXT, sizeof(Command) + sz);
-  memcpy(cmd->text, text, sz);
-  cmd->color = color;
-  cmd->font = font;
-  cmd->rect.x = x;
-  cmd->rect.y = y;
-  cmd->rect.width = ren_get_font_width(font, text);
-  cmd->rect.height = ren_get_font_height(font);
-  return x + cmd->rect.width;
+  RenRect rect;
+  rect.x = x;
+  rect.y = y;
+  rect.width = ren_get_font_width(font, text);
+  rect.height = ren_get_font_height(font);
+
+  if (rects_overlap(screen_rect, rect)) {
+    int sz = strlen(text) + 1;
+    Command *cmd = push_command(DRAW_TEXT, sizeof(Command) + sz);
+    if (cmd) {
+      memcpy(cmd->text, text, sz);
+      cmd->color = color;
+      cmd->font = font;
+      cmd->rect = rect;
+    }
+  }
+
+  return x + rect.width;
 }
 
 
