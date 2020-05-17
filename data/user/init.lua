@@ -6,7 +6,12 @@ local config = require "core.config"
 local style = require "core.style"
 
 -- light theme:
--- require "user.colors.summer"
+require "user.colors.max"
+
+config.line_limit = 79
+style.guide = style.background2
+
+config.treeview_size = 300 * SCALE
 
 -- key binding:
 -- keymap.add { ["ctrl+escape"] = "core:quit" }

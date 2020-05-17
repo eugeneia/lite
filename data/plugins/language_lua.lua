@@ -1,7 +1,7 @@
 local syntax = require "core.syntax"
 
 syntax.add {
-  files = "%.lua$",
+  files = { "%.lua$", "%.dasl$", "%.snabb$" },
   comment = "--",
   patterns = {
     { pattern = { '"', '"', '\\' },       type = "string"   },
