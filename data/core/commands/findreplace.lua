@@ -145,7 +145,9 @@ command.add("core.docview", {
 
   ["find-replace:replace-pattern"] = function()
     replace("Pattern", "", function(text, old, new)
-      return text:gsub(old, new)
+      return text:gsub(old, function (...)
+        return string.format(new, ...)
+      end)
     end)
   end,
 
