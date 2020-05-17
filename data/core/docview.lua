@@ -94,8 +94,8 @@ function DocView:get_scrollable_size()
 end
 
 
-function DocView:get_font()
-  return style[self.font]
+function DocView:get_font(font)
+  return style[font or self.font]
 end
 
 
@@ -274,7 +274,10 @@ function DocView:draw_line_text(idx, x, y)
   local tx, ty = x, y + self:get_line_text_y_offset()
   local font = self:get_font()
   for _, type, text in self.doc.highlighter:each_token(idx) do
-    local color = style.syntax[type]
+    local style = style.syntax[type]
+    local color = style.color
+    local font = font
+    if style.font then font = self:get_font(style.font) end
     tx = renderer.draw_text(font, text, tx, ty, color)
   end
 end

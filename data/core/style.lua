@@ -10,7 +10,9 @@ style.tab_width = common.round(170 * SCALE)
 style.font = renderer.font.load(EXEDIR .. "/data/fonts/font.ttf", 14 * SCALE)
 style.big_font = renderer.font.load(EXEDIR .. "/data/fonts/font.ttf", 34 * SCALE)
 style.icon_font = renderer.font.load(EXEDIR .. "/data/fonts/icons.ttf", 14 * SCALE)
-style.code_font = renderer.font.load(EXEDIR .. "/data/fonts/monospace.ttf", 13.5 * SCALE)
+style.code_font = renderer.font.load(EXEDIR .. "/data/fonts/monospace.ttf", 16 * SCALE)
+style.code_font_bold = renderer.font.load(EXEDIR .. "/data/fonts/monospace_bold.ttf", 16 * SCALE)
+style.code_font_italic = renderer.font.load(EXEDIR .. "/data/fonts/monospace_italic.ttf", 16 * SCALE)
 
 style.background = { common.color "#2e2e32" }
 style.background2 = { common.color "#252529" }
@@ -28,15 +30,15 @@ style.scrollbar = { common.color "#414146" }
 style.scrollbar2 = { common.color "#4b4b52" }
 
 style.syntax = {}
-style.syntax["normal"] = { common.color "#e1e1e6" }
-style.syntax["symbol"] = { common.color "#e1e1e6" }
-style.syntax["comment"] = { common.color "#676b6f" }
-style.syntax["keyword"] = { common.color "#E58AC9" }
-style.syntax["keyword2"] = { common.color "#F77483" }
-style.syntax["number"] = { common.color "#FFA94D" }
-style.syntax["literal"] = { common.color "#FFA94D" }
-style.syntax["string"] = { common.color "#f7c95c" }
-style.syntax["operator"] = { common.color "#93DDFA" }
-style.syntax["function"] = { common.color "#93DDFA" }
+style.syntax["normal"] = { color={ common.color "#e1e1e6" } }
+style.syntax["symbol"] = { color={ common.color "#e1e1e6" } }
+style.syntax["comment"] = { color={ common.color "#676b6f" } }
+style.syntax["keyword"] = { color={ common.color "#E58AC9" } }
+style.syntax["keyword2"] = { color={ common.color "#F77483" } }
+style.syntax["number"] = { color={ common.color "#FFA94D" } }
+style.syntax["literal"] = { color={ common.color "#FFA94D" } }
+style.syntax["string"] = { color={ common.color "#f7c95c" } }
+style.syntax["operator"] = { color={ common.color "#93DDFA" } }
+style.syntax["function"] = { color={ common.color "#93DDFA" } }
 
 return style
