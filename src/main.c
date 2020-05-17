@@ -23,7 +23,7 @@ static double get_scale(void) {
 #elif __APPLE__
   return dpi / 72.0;
 #else
-  return 1.0;
+  return dpi / 150.0;
 #endif
 }
 
@@ -90,7 +90,7 @@ int main(int argc, char **argv) {
 
   window = SDL_CreateWindow(
     "", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-    dm.w * 0.8, dm.h * 0.8, SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
+    dm.w * 0.6, dm.h * 0.9, SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
   init_window_icon();
   ren_init(window);
 
